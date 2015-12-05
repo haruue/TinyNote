@@ -8,9 +8,9 @@ public class MessageDB extends SQLiteOpenHelper {
 
     public static final String CREATE_USERDATABASE = "create table MessageDB ("
             + "id integer primary key autoincrement, "
-            + "time text, "
-            + "sign integer,"
-            + "message text) ";
+            + "time TimeStamp NOT NULL DEFAULT (datetime('now','localtime')), "
+            + "sign integer default 0, "
+            + "message text)";
 
     private Context context;
 
