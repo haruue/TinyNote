@@ -3,4 +3,5 @@
     <string name="input_message">输入一些文字</string>
     <string name="jot_down">记录</string>
     <string name="font_mono">monospace</string>
+    <string name="blank" />
 </resources>

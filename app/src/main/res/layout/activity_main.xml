@@ -11,6 +11,8 @@
         android:id="@+id/linearlayout_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
@@ -22,10 +24,10 @@
             android:layout_weight="4"
             android:hint="@string/input_message"
             android:fontFamily="@string/font_mono"
-            android:inputType="textNoSuggestions"
-            android:singleLine="false" />
+            android:inputType="textNoSuggestions|textMultiLine" />
 
         <Button
+            android:id="@+id/send_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -37,7 +39,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar_inMain"
-        android:layout_above="@id/linearlayout_bottom">
+        android:layout_above="@id/linearlayout_bottom"
+        android:fastScrollEnabled="true"
+        android:scrollbarStyle="insideInset"
+        android:transcriptMode="normal">
 
     </android.support.v7.widget.RecyclerView>
 
