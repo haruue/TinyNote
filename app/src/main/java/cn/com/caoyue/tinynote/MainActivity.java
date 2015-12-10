@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    ArrayList<MessageItem> messageArray = new ArrayList<MessageItem>();
+    ArrayList<MessageItem> messageArray;
     private RecyclerView messageView;
     private MessageAdapter messageAdapter;
 
@@ -67,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
     private void refreshMessageView() {
         getMessage();
         messageAdapter = new MessageAdapter(messageArray);
+        messageAdapter.notifyDataSetChanged();
+        messageView.setAdapter(messageAdapter);
         messageView.scrollToPosition(messageArray.size() - 1);
     }
 
@@ -74,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
      * 创建/取得数据表中的数据
      */
     private void getMessage() {
+        messageArray = new ArrayList<MessageItem>();
         //创建并取得数据表
         MessageDB messageDB = new MessageDB(this, "message.db", null, 2);
         SQLiteDatabase db = messageDB.getWritableDatabase();
@@ -111,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                     refreshMessageView();
                     //清空输入域
                     messageInput.setText(R.string.blank);
+                    messageView.scrollToPosition(messageArray.size() - 1);
                     break;
             }
         }
