@@ -2,9 +2,11 @@ package cn.com.caoyue.tinynote;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         messageView.setAdapter(messageAdapter);
         messageView.setItemAnimator(new DefaultItemAnimator());
         messageAdapter.setOnItemClickListener(new MessageAdapter.OnItemClickListener() {
+            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onItemClick(final View view, int position) {
                 view.animate().translationZ(15F).setDuration(300).setListener(new AnimatorListenerAdapter() {
