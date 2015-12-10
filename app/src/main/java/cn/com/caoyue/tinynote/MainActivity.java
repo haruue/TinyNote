@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void refreshMessageView() {
         getMessage();
-        messageAdapter.notifyDataSetChanged();
+        messageAdapter = new MessageAdapter(messageArray);
         messageView.scrollToPosition(messageArray.size() - 1);
     }
 
