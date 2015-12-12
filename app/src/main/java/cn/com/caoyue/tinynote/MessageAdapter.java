@@ -17,6 +17,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         mData = date;
     }
 
+    public void setData(List<MessageItem> date){
+        mData = date;
+        notifyDataSetChanged();
+    }
+
     public OnItemClickListener itemClickListener;
 
     public void setOnItemClickListener(OnItemClickListener itemClickListener) {

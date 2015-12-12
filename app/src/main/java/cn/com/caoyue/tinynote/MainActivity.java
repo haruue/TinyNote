@@ -17,6 +17,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.jude.utils.JUtils;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -36,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init(Bundle savedInstanceState) {
+        JUtils.initialize(getApplication());
+        JUtils.setDebug(BuildConfig.DEBUG,"TINYNOTE");
         //Toolbar 相关
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_inMain);
         toolbar.setTitle(R.string.app_name);
@@ -45,9 +49,19 @@ public class MainActivity extends AppCompatActivity {
         //设定RecyclerView
         messageAdapter = new MessageAdapter(messageArray);
         messageView = (RecyclerView) findViewById(R.id.recyclerview_message_show);
-        messageView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
+        linearLayoutManager.setStackFromEnd(true);
+        messageView.setLayoutManager(linearLayoutManager);
         messageView.setAdapter(messageAdapter);
         messageView.setItemAnimator(new DefaultItemAnimator());
+        messageAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+
+            @Override
+            public void onChanged() {
+                //直接在这里注册进行监听，添加数据则跳到底部
+                messageView.smoothScrollToPosition(messageAdapter.getItemCount() - 1);
+            }
+        });
         messageAdapter.setOnItemClickListener(new MessageAdapter.OnItemClickListener() {
             @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
@@ -61,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
                 }).start();
             }
         });
-        messageView.scrollToPosition(messageArray.size() - 1);
     }
 
     /**
@@ -69,14 +82,14 @@ public class MainActivity extends AppCompatActivity {
      */
     private void refreshMessageView() {
         getMessage();
-        messageAdapter = new MessageAdapter(messageArray);
-        messageAdapter.notifyDataSetChanged();
-        messageView.setAdapter(messageAdapter);
-        messageView.scrollToPosition(messageArray.size() - 1);
+        //对Adapter更新数据，而不是重建Adapter
+        messageAdapter.setData(messageArray);
     }
 
     /**
      * 创建/取得数据表中的数据
+     * 数据库操作写在在Activity中且在主线程进行不太优雅。
+     * 可以尝试使用Rxjava+sqlbrite，从数据库订阅数据变动通知，就不用每次手动修改UI，会更优雅。
      */
     private void getMessage() {
         messageArray = new ArrayList<MessageItem>();
@@ -117,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
                     refreshMessageView();
                     //清空输入域
                     messageInput.setText(R.string.blank);
-                    messageView.scrollToPosition(messageArray.size() - 1);
                     break;
             }
         }
