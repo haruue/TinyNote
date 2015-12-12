@@ -39,10 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar_inMain"
-        android:layout_above="@id/linearlayout_bottom"
-        android:fastScrollEnabled="true"
-        android:scrollbarStyle="insideInset"
-        android:transcriptMode="normal">
+        android:layout_above="@id/linearlayout_bottom">
 
     </android.support.v7.widget.RecyclerView>
 
