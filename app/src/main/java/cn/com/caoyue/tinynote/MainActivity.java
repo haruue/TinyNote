@@ -2,7 +2,6 @@ package cn.com.caoyue.tinynote;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,11 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void init(Bundle savedInstanceState) {
         JUtils.initialize(getApplication());
-        JUtils.setDebug(BuildConfig.DEBUG,"TINYNOTE");
-        //Toolbar 相关
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_inMain);
-        toolbar.setTitle(R.string.app_name);
-        setSupportActionBar(toolbar);
+        JUtils.setDebug(BuildConfig.DEBUG, "TINYNOTE");
         //取得数据
         getMessage();
         //设定RecyclerView
@@ -63,16 +57,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         messageAdapter.setOnItemClickListener(new MessageAdapter.OnItemClickListener() {
-            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onItemClick(final View view, int position) {
-                view.animate().translationZ(15F).setDuration(300).setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        view.animate().translationZ(1f).setDuration(500).start();
-                    }
-                }).start();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    view.animate().translationZ(15F).setDuration(300).setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            view.animate().translationZ(1f).setDuration(500).start();
+                        }
+                    }).start();
+                }
             }
         });
     }
