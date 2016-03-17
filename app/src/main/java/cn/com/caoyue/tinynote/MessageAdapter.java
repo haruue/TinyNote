@@ -22,6 +22,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         notifyDataSetChanged();
     }
 
+    public MessageItem getData(int position) {
+        return mData.get(position);
+    }
+
     public OnItemClickListener itemClickListener;
 
     public void setOnItemClickListener(OnItemClickListener itemClickListener) {
@@ -30,6 +34,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
+        boolean onItemLongClick(View view, int position);
     }
 
     @Override
@@ -49,7 +54,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         return mData.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         public LinearLayout wholeView;
 
@@ -57,6 +62,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             super(itemView);
             wholeView = (LinearLayout) itemView;
             wholeView.setOnClickListener(this);
+            wholeView.setOnLongClickListener(this);
         }
 
         @Override
@@ -64,6 +70,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             if (itemClickListener != null) {
                 itemClickListener.onItemClick(v, getPosition());
             }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (itemClickListener != null) {
+                return itemClickListener.onItemLongClick(v, getPosition());
+            }
+            return false;
         }
     }
 }

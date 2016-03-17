@@ -3,9 +3,6 @@
 .DS_Store
 /captures
 
-# built application files
-*.apk
-
 # files for the dex VM
 *.dex
 
