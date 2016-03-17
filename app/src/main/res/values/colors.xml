@@ -2,7 +2,8 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#263238</color>
     <color name="messageTextColor">#000000</color>
     <color name="timeTextColor">#666666</color>
+    <color name="white">#eceff1</color>
 </resources>

@@ -7,4 +7,5 @@
     <string name="copy_to_clipboard">复制到剪贴板</string>
     <string name="delete_this_message">删除这条记录</string>
     <string name="copy_to_clipboard_success">成功复制到剪贴板</string>
+    <string name="welcome">欢迎使用 TinyNote ，这是一个简洁的记事本。在下面输入一些你想要记录的内容，然后按下[记录]键。</string>
 </resources>

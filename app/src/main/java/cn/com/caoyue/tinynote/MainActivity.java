@@ -13,7 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.jude.utils.JUtils;
@@ -35,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements MessageDB.Datebas
         setContentView(R.layout.activity_main);
         init(savedInstanceState);
         //控件
-        ((Button) findViewById(R.id.send_button)).setOnClickListener(new ListenerInMain());
+        (findViewById(R.id.send_button)).setOnClickListener(new ListenerInMain());
     }
 
     private void init(Bundle savedInstanceState) {
@@ -79,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements MessageDB.Datebas
             @Override
             public boolean onItemLongClick(View view, int position) {
                 selectedItem = messageAdapter.getData(position);
-                return true;
+                return false;
             }
         });
         //获取数据

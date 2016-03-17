@@ -6,6 +6,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.jude.utils.JUtils;
 import com.squareup.sqlbrite.BriteDatabase;
@@ -25,6 +27,7 @@ public class MessageDB extends SQLiteOpenHelper {
     SqlBrite sqlBrite;
     BriteDatabase db;
     final static String DATABASE_NAME = "MessageDB";
+    Handler handler;
 
     public interface DatebaseListener {
 
@@ -48,6 +51,7 @@ public class MessageDB extends SQLiteOpenHelper {
         this.context = context;
         sqlBrite = SqlBrite.create();
         db = sqlBrite.wrapDatabaseHelper(this, Schedulers.io());
+        handler = new Handler(context.getMainLooper());
     }
 
     public void setListener(DatebaseListener listener) {
@@ -56,37 +60,58 @@ public class MessageDB extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREATE_MESSAGEDATABASE);
+        Looper.prepare();
+        final ProgressDialog progressDialog = new ProgressDialog(context);
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                progressDialog.show();
+            }
+        });
+        final SQLiteDatabase database = db;
+        database.execSQL(CREATE_MESSAGEDATABASE);
+        ContentValues values = new ContentValues();
+        values.put("sign", 0);
+        values.put("message", context.getResources().getString(R.string.welcome));
+        values.put("hash", JUtils.MD5(context.getResources().getString(R.string.welcome).getBytes()));
+        database.insert(DATABASE_NAME, null, values);
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                progressDialog.hide();
+                progressDialog.dismiss();
+            }
+        });
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Looper.prepare();
         final SQLiteDatabase database = db;
         switch (oldVersion) {
             case 2:
                 final ProgressDialog progressDialog = new ProgressDialog(context);
-                progressDialog.show();
-                Observable.create(new Observable.OnSubscribe<Object>() {
+                handler.post(new Runnable() {
                     @Override
-                    public void call(Subscriber<? super Object> subscriber) {
-                        database.execSQL("ALTER TABLE `" + DATABASE_NAME + "` ADD COLUMN (hash text)");
-                        Cursor cursor = database.rawQuery("SELECT * FROM `" + DATABASE_NAME + "`", new String[]{});
-                        if (cursor.moveToFirst()) {
-                            do {
-                                database.execSQL("UPDATE `" + DATABASE_NAME + "` SET `hash` = '" + JUtils.MD5(cursor.getString(cursor.getColumnIndex("message")).getBytes()) + "' WHERE `id` = " + cursor.getInt(cursor.getColumnIndex("id")));
-                            } while (cursor.moveToNext());
-                        }
-                        cursor.close();
+                    public void run() {
+                        progressDialog.show();
                     }
-                })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Action1<Object>() {
-                            @Override
-                            public void call(Object o) {
-                                progressDialog.dismiss();
-                            }
-                        });
+                });
+                database.execSQL("ALTER TABLE `" + DATABASE_NAME + "` ADD COLUMN hash text");
+                Cursor cursor = database.rawQuery("SELECT * FROM `" + DATABASE_NAME + "`", new String[]{});
+                if (cursor.moveToFirst()) {
+                    do {
+                        database.execSQL("UPDATE `" + DATABASE_NAME + "` SET `hash` = '" + JUtils.MD5(cursor.getString(cursor.getColumnIndex("message")).getBytes()) + "' WHERE `id` = " + cursor.getInt(cursor.getColumnIndex("id")));
+                    } while (cursor.moveToNext());
+                }
+                cursor.close();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.hide();
+                        progressDialog.dismiss();
+                    }
+                });
                 break;
         }
 
@@ -150,7 +175,7 @@ public class MessageDB extends SQLiteOpenHelper {
         Observable.create(new Observable.OnSubscribe<MessageItem>() {
             @Override
             public void call(Subscriber<? super MessageItem> subscriber) {
-                db.delete(DATABASE_NAME, "id", item.getId() + "");
+                db.delete(DATABASE_NAME, "id=?", item.getId() + "");
             }
         })
                 .subscribeOn(Schedulers.io())
